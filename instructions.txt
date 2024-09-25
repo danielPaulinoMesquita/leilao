@@ -1,0 +1,11 @@
+// biblioteca para inicializar variáveis e controla-las
+go get github.com/joho/godotenv
+
+// lib from uber, it helps to set up json objects and log
+go get go.uber.org/zap
+
+
+// pegar as dependencies do mongoDB
+go get go.mongodb.org/mongo-driver/mongo
+
+
