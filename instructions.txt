@@ -9,3 +9,5 @@ go get go.uber.org/zap
 go get go.mongodb.org/mongo-driver/mongo
 
 
+//peegar o uuid, usar da oogle
+go get github.com/google/uuid

@@ -1,6 +1,43 @@
 package auction_entity
 
-import "time"
+import (
+	"context"
+	"github.com/google/uuid"
+	"leilao/internal/internal_error"
+	"time"
+)
+
+func CreateAuction(
+	productName string, category, description string,
+	condition ProductionCondition) (*Auction, *internal_error.InternalError) {
+
+	auction := &Auction{
+		Id:          uuid.New().String(),
+		ProductName: productName,
+		Category:    category,
+		Description: description,
+		Condition:   condition,
+		Status:      Active,
+		Timestamp:   time.Now(),
+	}
+
+	if err := auction.Validate(); err != nil {
+		return nil, err
+	}
+
+	return auction, nil
+}
+
+func (au *Auction) Validate() *internal_error.InternalError {
+	if (len(au.ProductName) <= 1) ||
+		(len(au.Category) <= 2) ||
+		(len(au.Description) <= 10) {
+
+		return internal_error.NewBadRequestError("invalid product name")
+	}
+
+	return nil
+}
 
 type Auction struct {
 	Id          string
@@ -25,3 +62,18 @@ const (
 	Us
 	Refurbished
 )
+
+type AuctionRepositoryInterface interface {
+	CreateAuction(ctx context.Context,
+		auctionEntity *Auction) *internal_error.InternalError
+
+	FindAuctions(
+		ctx context.Context,
+		status AuctionStatus,
+		category, productName string,
+	) ([]Auction, *internal_error.InternalError)
+
+	FindAuctionByID(
+		ctx context.Context,
+		id string) (*Auction, *internal_error.InternalError)
+}
