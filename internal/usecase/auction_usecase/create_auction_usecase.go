@@ -3,7 +3,9 @@ package auction_usecase
 import (
 	"context"
 	"leilao/internal/entity/auction_entity"
+	"leilao/internal/entity/bid_entity"
 	"leilao/internal/internal_error"
+	"leilao/internal/usecase/bid_usecase"
 	"time"
 )
 
@@ -24,11 +26,16 @@ type AuctionOutputDTO struct {
 	Timestamp   time.Time           `json:"timestamp" time_format:"2006-01-02 15:04:05"`
 }
 
+type WinningInfoOutputDTO struct {
+	Auction AuctionOutputDTO          `json:"auction"`
+	Bid     *bid_usecase.BidOutputDTO `json:"bid,omitempty"`
+}
 type ProductionCondition int64
 type AuctionStatus int64
 
 type AuctionUseCase struct {
 	auctionRepository auction_entity.AuctionRepositoryInterface
+	bidRepository     bid_entity.BidEntityRepositoryInterface
 }
 
 func (au *AuctionUseCase) CreateAuction(ctx context.Context, auctionInput AuctionInputDTO) *internal_error.InternalError {

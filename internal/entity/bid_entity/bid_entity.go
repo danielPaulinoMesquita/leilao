@@ -14,7 +14,7 @@ type Bid struct {
 	Timestamp time.Time
 }
 
-type BidEntityRepository interface {
+type BidEntityRepositoryInterface interface {
 	CreateBid(ctx context.Context, bidEntities []Bid) *internal_error.InternalError
 	FindBidByAuctionId(
 		auctionId string, ctx context.Context) ([]Bid, *internal_error.InternalError)

@@ -14,5 +14,5 @@ type BidOutputDTO struct {
 }
 
 type BidUseCase struct {
-	BidRepository bid_entity.BidEntityRepository
+	BidRepository bid_entity.BidEntityRepositoryInterface
 }
