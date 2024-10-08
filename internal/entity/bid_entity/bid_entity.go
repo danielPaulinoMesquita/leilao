@@ -39,6 +39,7 @@ func (b *Bid) Validate() *internal_error.InternalError {
 	} else if b.Amount <= 0 {
 		return internal_error.NewBadRequestError("Amount must be greater than zero")
 	}
+	return nil
 }
 
 type BidEntityRepositoryInterface interface {

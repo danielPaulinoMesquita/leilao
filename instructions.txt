@@ -9,5 +9,13 @@ go get go.uber.org/zap
 go get go.mongodb.org/mongo-driver/mongo
 
 
-//peegar o uuid, usar da oogle
+// pegar o uuid, usar do google
 go get github.com/google/uuid
+
+// pegar validator para validar campos
+go get github.com/go-playground/validator/v10
+
+// pegar validator para validar campos, outra lib necessária
+go get github.com/go-playground/locales/en
+
+go get github.com/gin-gonic/gin/binding
