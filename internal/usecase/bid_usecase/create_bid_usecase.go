@@ -4,6 +4,7 @@ import (
 	"context"
 	"leilao/configuration/logger"
 	"leilao/internal/entity/bid_entity"
+	"leilao/internal/infra/database/bid"
 	"leilao/internal/internal_error"
 	"os"
 	"strconv"
@@ -33,7 +34,7 @@ type BidUseCase struct {
 	bidChannel          chan bid_entity.Bid
 }
 
-func NewBidUseCase(bidRepository bid_entity.BidEntityRepositoryInterface) *BidUseCase {
+func NewBidUseCase(bidRepository *bid.BidRepository) BidUseCaseInterface {
 	maxSizeInterval := getMaxBatchSizeInterval()
 	maxBatchSize := getMaxBatchSize()
 
@@ -53,7 +54,7 @@ func NewBidUseCase(bidRepository bid_entity.BidEntityRepositoryInterface) *BidUs
 var bidBatch []bid_entity.Bid
 
 type BidUseCaseInterface interface {
-	CreateBid(ctx context.Context, bidInputDTO BidOutputDTO) *internal_error.InternalError
+	CreateBid(ctx context.Context, bidInputDTO BidInputDTO) *internal_error.InternalError
 	FindWinningBidByAuctionId(ctx context.Context, auctionId string) (*BidOutputDTO, *internal_error.InternalError)
 	FindBidByAuctionId(ctx context.Context, auctionId string) ([]BidOutputDTO, *internal_error.InternalError)
 }

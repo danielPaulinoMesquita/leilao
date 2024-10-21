@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (ar *AuctionRepository) FindAuctionById(ctx context.Context, id string) (*auction_entity.Auction, *internal_error.InternalError) {
+func (ar *AuctionRepository) FindAuctionByID(ctx context.Context, id string) (*auction_entity.Auction, *internal_error.InternalError) {
 	filter := bson.M{"_id": id}
 
 	var auctionEntityMongo AuctionEntityMongo

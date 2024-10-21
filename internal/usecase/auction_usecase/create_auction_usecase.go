@@ -4,6 +4,7 @@ import (
 	"context"
 	"leilao/internal/entity/auction_entity"
 	"leilao/internal/entity/bid_entity"
+	"leilao/internal/infra/database/bid"
 	"leilao/internal/internal_error"
 	"leilao/internal/usecase/bid_usecase"
 	"time"
@@ -32,6 +33,31 @@ type WinningInfoOutputDTO struct {
 }
 type ProductionCondition int64
 type AuctionStatus int64
+
+func NewAuctionUseCase(auctionRepositoryInterface auction_entity.AuctionRepositoryInterface,
+	bidRepositoryInterface *bid.BidRepository) AuctionUseCaseInterface {
+	return &AuctionUseCase{
+		auctionRepository: auctionRepositoryInterface,
+		bidRepository:     bidRepositoryInterface}
+}
+
+type AuctionUseCaseInterface interface {
+	CreateAuction(
+		ctx context.Context,
+		auctionInput AuctionInputDTO) *internal_error.InternalError
+
+	FindAuctions(
+		ctx context.Context,
+		status auction_entity.AuctionStatus,
+		category, productName string) ([]AuctionOutputDTO, *internal_error.InternalError)
+
+	FindAuctionById(
+		ctx context.Context,
+		id string) (*AuctionOutputDTO, *internal_error.InternalError)
+
+	FindWinningBidByAuctionId(ctx context.Context,
+		auctionId string) (*WinningInfoOutputDTO, *internal_error.InternalError)
+}
 
 type AuctionUseCase struct {
 	auctionRepository auction_entity.AuctionRepositoryInterface

@@ -7,7 +7,10 @@ import (
 	"leilao/internal/usecase/bid_usecase"
 )
 
-func (au *AuctionUseCase) FindAuctions(ctx context.Context, status auction_entity.AuctionStatus, category, productName string) ([]AuctionOutputDTO, *internal_error.InternalError) {
+func (au *AuctionUseCase) FindAuctions(
+	ctx context.Context,
+	status auction_entity.AuctionStatus,
+	category, productName string) ([]AuctionOutputDTO, *internal_error.InternalError) {
 	auctions, err := au.auctionRepository.FindAuctions(ctx, auction_entity.AuctionStatus(status), category, productName)
 
 	if err != nil {
@@ -28,10 +31,10 @@ func (au *AuctionUseCase) FindAuctions(ctx context.Context, status auction_entit
 		})
 	}
 	return auctionsOutput, nil
-
 }
 
-func (au *AuctionUseCase) FindAuctionById(ctx context.Context, id string) (*AuctionOutputDTO, *internal_error.InternalError) {
+func (au *AuctionUseCase) FindAuctionById(
+	ctx context.Context, id string) (*AuctionOutputDTO, *internal_error.InternalError) {
 	auctionEntity, err := au.auctionRepository.FindAuctionByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -48,7 +51,8 @@ func (au *AuctionUseCase) FindAuctionById(ctx context.Context, id string) (*Auct
 	}, nil
 }
 
-func (au *AuctionUseCase) FindWinningBidByAuctionId(ctx context.Context, auctionId string) (*WinningInfoOutputDTO, *internal_error.InternalError) {
+func (au *AuctionUseCase) FindWinningBidByAuctionId(ctx context.Context,
+	auctionId string) (*WinningInfoOutputDTO, *internal_error.InternalError) {
 	auction, err := au.auctionRepository.FindAuctionByID(ctx, auctionId)
 	if err != nil {
 		return nil, err

@@ -6,6 +6,12 @@ import (
 	"leilao/internal/internal_error"
 )
 
+func NewUserUseCase(UserRepository user_entity.UserRepositoryInterface) UserUseCaseInterface {
+	return &UserUsecase{
+		UserRepository: UserRepository,
+	}
+}
+
 type UserUsecase struct {
 	UserRepository user_entity.UserRepositoryInterface
 }

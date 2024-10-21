@@ -12,7 +12,7 @@ import (
 )
 
 func (bd *BidRepository) FindBidByAuctionId(
-	auctionId string, ctx context.Context) ([]bid_entity.Bid, *internal_error.InternalError) {
+	ctx context.Context, auctionId string) ([]bid_entity.Bid, *internal_error.InternalError) {
 	filter := bson.M{"auction_id": auctionId}
 
 	cursor, err := bd.Collection.Find(ctx, filter)

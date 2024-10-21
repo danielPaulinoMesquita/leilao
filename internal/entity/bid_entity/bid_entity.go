@@ -45,7 +45,7 @@ func (b *Bid) Validate() *internal_error.InternalError {
 type BidEntityRepositoryInterface interface {
 	CreateBid(ctx context.Context, bidEntities []Bid) *internal_error.InternalError
 	FindBidByAuctionId(
-		auctionId string, ctx context.Context) ([]Bid, *internal_error.InternalError)
+		ctx context.Context, auctionId string) ([]Bid, *internal_error.InternalError)
 	FindWinningBidByAuctionId(
 		ctx context.Context,
 		auctionId string) (*Bid, *internal_error.InternalError)

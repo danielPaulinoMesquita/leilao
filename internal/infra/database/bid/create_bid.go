@@ -24,6 +24,13 @@ type BidRepository struct {
 	AuctionRepository *auction.AuctionRepository
 }
 
+func NewBidRepository(database *mongo.Database, auctionRepository *auction.AuctionRepository) *BidRepository {
+	return &BidRepository{
+		Collection:        database.Collection("bid"),
+		AuctionRepository: auctionRepository,
+	}
+}
+
 func (bd *BidRepository) CreateBid(ctx context.Context, bidEntities []bid_entity.Bid) *internal_error.InternalError {
 	var wq sync.WaitGroup
 
@@ -34,7 +41,7 @@ func (bd *BidRepository) CreateBid(ctx context.Context, bidEntities []bid_entity
 		go func(bidValue bid_entity.Bid) {
 			defer wq.Done()
 
-			auctionEnity, err := bd.AuctionRepository.FindAuctionById(ctx, bidValue.AuctionId)
+			auctionEnity, err := bd.AuctionRepository.FindAuctionByID(ctx, bidValue.AuctionId)
 			if err != nil {
 				logger.Error("Error trying to find auction by id", err)
 				return
