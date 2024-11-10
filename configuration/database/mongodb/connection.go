@@ -10,17 +10,17 @@ import (
 
 const (
 	MONGODB_URL = "MONGODB_URL"
-	MONGODB_DB  = "MONGODB_DATABASE"
+	MONGODB_DB  = "MONGODB_DB"
 )
 
 func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {
-	mongoURL := os.Getenv("MONGODB_URL")
-	mongoDatabase := os.Getenv("MONGODB_DATABASE")
+	mongoURL := os.Getenv(MONGODB_URL)
+	mongoDatabase := os.Getenv(MONGODB_DB)
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURL))
 
 	if err != nil {
-		logger.Error("Error trying to connect to MongoDB ", err)
+		logger.Error("Error trying to connect to MongoDB (BANCO DE DADOS CONEXÃO)", err)
 		return nil, err
 	}
 

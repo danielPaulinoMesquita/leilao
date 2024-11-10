@@ -20,6 +20,22 @@ func (ar *AuctionRepository) FindAuctionByID(ctx context.Context, id string) (*a
 		return nil, internal_error.NewInternalServerError("Error trying to find auction")
 	}
 
+	duration, err := GetAuctionDuration()
+	if err != nil {
+		logger.Error("Error getting auction duration", err)
+		return nil, internal_error.NewInternalServerError("Failed to get auction duration")
+	}
+
+	now := time.Now()
+	expirationTime := time.Unix(auctionEntityMongo.Timestamp, 0).Add(duration)
+	if now.After(expirationTime) {
+		update := bson.M{"$set": bson.M{"status": auction_entity.Closed}}
+		if _, err := ar.Collection.UpdateOne(ctx, filter, update); err != nil {
+			logger.Error("Error closing expired auction", err)
+		}
+		return nil, internal_error.NewInternalServerError("Auction has expired")
+	}
+
 	return &auction_entity.Auction{
 		Id:          auctionEntityMongo.Id,
 		ProductName: auctionEntityMongo.ProductName,
@@ -34,7 +50,7 @@ func (ar *AuctionRepository) FindAuctionByID(ctx context.Context, id string) (*a
 func (ar *AuctionRepository) FindAuctions(
 	ctx context.Context,
 	status auction_entity.AuctionStatus,
-	category,
+	category string,
 	productName string) ([]auction_entity.Auction, *internal_error.InternalError) {
 	filter := bson.M{}
 
@@ -47,16 +63,23 @@ func (ar *AuctionRepository) FindAuctions(
 	}
 
 	if productName != "" {
-		filter["productName"] = primitive.Regex{
+		filter["product_name"] = primitive.Regex{
 			Pattern: productName,
 			Options: "i",
 		}
 	}
 
+	fmt.Println("Filter: ", filter)
+
 	cursor, err := ar.Collection.Find(ctx, filter)
+
 	if err != nil {
 		logger.Error("Error while finding auctions", err)
 		return nil, internal_error.NewInternalServerError("Error trying  to find an auction")
+	}
+
+	if cursor.RemainingBatchLength() == 0 {
+		fmt.Println("No auctions found.")
 	}
 
 	defer cursor.Close(ctx)

@@ -4,7 +4,6 @@ import (
 	"context"
 	"leilao/internal/entity/auction_entity"
 	"leilao/internal/entity/bid_entity"
-	"leilao/internal/infra/database/bid"
 	"leilao/internal/internal_error"
 	"leilao/internal/usecase/bid_usecase"
 	"time"
@@ -13,8 +12,8 @@ import (
 type AuctionInputDTO struct {
 	ProductName string              `json:"product_name" binding:"required,min=1"`
 	Category    string              `json:"category" binding:"required,min=2"`
-	Description string              `json:"description" binding:"required,min=10, max=200"`
-	Condition   ProductionCondition `json:"condition"`
+	Description string              `json:"description" binding:"required,min=10"`
+	Condition   ProductionCondition `json:"condition" binding:"oneof=0 1 2"`
 }
 
 type AuctionOutputDTO struct {
@@ -35,7 +34,7 @@ type ProductionCondition int64
 type AuctionStatus int64
 
 func NewAuctionUseCase(auctionRepositoryInterface auction_entity.AuctionRepositoryInterface,
-	bidRepositoryInterface *bid.BidRepository) AuctionUseCaseInterface {
+	bidRepositoryInterface bid_entity.BidEntityRepositoryInterface) AuctionUseCaseInterface {
 	return &AuctionUseCase{
 		auctionRepository: auctionRepositoryInterface,
 		bidRepository:     bidRepositoryInterface}
@@ -49,7 +48,8 @@ type AuctionUseCaseInterface interface {
 	FindAuctions(
 		ctx context.Context,
 		status auction_entity.AuctionStatus,
-		category, productName string) ([]AuctionOutputDTO, *internal_error.InternalError)
+		category,
+		productName string) ([]AuctionOutputDTO, *internal_error.InternalError)
 
 	FindAuctionById(
 		ctx context.Context,

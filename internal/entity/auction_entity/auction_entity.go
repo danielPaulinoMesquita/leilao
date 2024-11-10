@@ -29,13 +29,15 @@ func CreateAuction(
 }
 
 func (au *Auction) Validate() *internal_error.InternalError {
-	if (len(au.ProductName) <= 1) ||
-		(len(au.Category) <= 2) ||
-		(len(au.Description) <= 10) {
-
+	if len(au.ProductName) <= 1 {
 		return internal_error.NewBadRequestError("invalid product name")
 	}
-
+	if len(au.Category) <= 2 {
+		return internal_error.NewBadRequestError("invalid category")
+	}
+	if len(au.Description) <= 10 {
+		return internal_error.NewBadRequestError("invalid description")
+	}
 	return nil
 }
 
@@ -55,6 +57,7 @@ type AuctionStatus int
 const (
 	Active AuctionStatus = iota
 	Completed
+	Closed
 )
 
 const (

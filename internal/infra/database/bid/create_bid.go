@@ -48,6 +48,8 @@ func (bd *BidRepository) CreateBid(ctx context.Context, bidEntities []bid_entity
 			}
 
 			if auctionEnity.Status != auction_entity.Active {
+				logger.Error("Cannot place bid; auction is not active", err)
+
 				return
 			}
 
@@ -65,10 +67,8 @@ func (bd *BidRepository) CreateBid(ctx context.Context, bidEntities []bid_entity
 			}
 
 		}(bid)
-
 	}
 
 	wq.Wait()
 	return nil
-
 }
