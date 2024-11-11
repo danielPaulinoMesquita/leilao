@@ -4,7 +4,6 @@ services:
   app:
     build:
       dockerfile: Dockerfile
-      context: .
     ports:
       - "8080:8080"
     env_file:
@@ -18,8 +17,6 @@ services:
     container_name: mongodbfullcycle
     ports:
       - "27017:27017"
-    env_file:
-      - cmd/auction/.env
     volumes:
       - mongo-data:/data/db
     networks:

@@ -46,37 +46,23 @@ func GetAuctionDuration() (time.Duration, error) {
 	return duration, nil
 }
 
-func (ar *AuctionRepository) CheckAuctionIsClosed(ctx context.Context) {
-	duration, err := GetAuctionDuration()
-	if err != nil {
-		logger.Error("Error getting auction duration", err)
-		return
-	}
+func (ar *AuctionRepository) CheckAuctionIsClosed(
+	ctx context.Context,
+	filter bson.M,
+	duration time.Duration) *internal_error.InternalError {
+	var auctionEntityMongo AuctionEntityMongo
 
-	ticker := time.NewTicker(1 * time.Minute) // Check every minute
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			ar.CloseExpiredAuctions(ctx, duration)
-		case <-ctx.Done():
-			return
-		}
-	}
-}
-
-func (ar *AuctionRepository) CloseExpiredAuctions(ctx context.Context, duration time.Duration) {
 	now := time.Now()
-	expirationTime := now.Add(-duration)
-
-	filter := bson.M{"timestamp": bson.M{"$lt": expirationTime}}
-	update := bson.M{"$set": bson.M{"status": auction_entity.Closed}}
-
-	_, err := ar.Collection.UpdateMany(ctx, filter, update)
-	if err != nil {
-		logger.Error("Error closing expired auctions", err)
+	expirationTime := time.Unix(auctionEntityMongo.Timestamp, 0).Add(duration)
+	if now.After(expirationTime) {
+		update := bson.M{"$set": bson.M{"status": auction_entity.Closed}}
+		if _, err := ar.Collection.UpdateOne(ctx, filter, update); err != nil {
+			logger.Error("Error closing expired auction", err)
+		}
+		return internal_error.NewInternalServerError("Auction has expired")
 	}
+
+	return nil
 }
 
 func (ar *AuctionRepository) CreateAuction(
