@@ -26,14 +26,10 @@ func (ar *AuctionRepository) FindAuctionByID(ctx context.Context, id string) (*a
 		return nil, internal_error.NewInternalServerError("Failed to get auction duration")
 	}
 
-	now := time.Now()
-	expirationTime := time.Unix(auctionEntityMongo.Timestamp, 0).Add(duration)
-	if now.After(expirationTime) {
-		update := bson.M{"$set": bson.M{"status": auction_entity.Closed}}
-		if _, err := ar.Collection.UpdateOne(ctx, filter, update); err != nil {
-			logger.Error("Error closing expired auction", err)
-		}
-		return nil, internal_error.NewInternalServerError("Auction has expired")
+	err = ar.CheckAuctionIsClosed(ctx, filter, duration)
+
+	if err != nil {
+		return nil, internal_error.NewInternalServerError(err.Error())
 	}
 
 	return &auction_entity.Auction{

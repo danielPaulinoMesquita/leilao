@@ -1,0 +1,18 @@
+### Teste CRIAR AUCTION
+POST localhost:8080/auctions
+Content-Type: application/json
+
+{
+"product_name": "Sexto Objeto",
+"category": "BICICLETA",
+"description": "Teste de brasília",
+"condition": 0
+}
+
+### Teste CONSULTAR AUCTIONS PARA VER ID
+GET localhost:8080/auctions?status=0&category&productName
+Accept: application/json
+
+### Teste CONSULTAR AUCTION PELO ID E VERIFICAR DURAÇÃO
+GET localhost:8080/auctions/90fb2c59-c76d-4cf1-9e8e-95fda36c757b
+Accept: application/json

@@ -22,8 +22,8 @@ func main() {
 	ctx := context.Background()
 
 	// godotenv.Load() to load the env, maybe you need to specify the path of .env
-	//if err := godotenv.Load(".env"); err != nil { to run local
-	if err := godotenv.Load("cmd/auction/.env"); err != nil {
+	if err := godotenv.Load(".env"); err != nil {
+		//if err := godotenv.Load("cmd/auction/.env"); err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 		return
 	}

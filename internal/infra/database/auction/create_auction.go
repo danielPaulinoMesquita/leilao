@@ -52,8 +52,15 @@ func (ar *AuctionRepository) CheckAuctionIsClosed(
 	duration time.Duration) *internal_error.InternalError {
 	var auctionEntityMongo AuctionEntityMongo
 
+	err := ar.Collection.FindOne(ctx, filter).Decode(&auctionEntityMongo)
+	if err != nil {
+		logger.Error("Failed to find auction", err)
+		return internal_error.NewInternalServerError("Auction not found")
+	}
+
 	now := time.Now()
 	expirationTime := time.Unix(auctionEntityMongo.Timestamp, 0).Add(duration)
+
 	if now.After(expirationTime) {
 		update := bson.M{"$set": bson.M{"status": auction_entity.Closed}}
 		if _, err := ar.Collection.UpdateOne(ctx, filter, update); err != nil {
